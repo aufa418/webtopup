@@ -14,7 +14,7 @@ datasource db {
 }
 
 model Product {
-  id    Int    @id @default(autoincrement())
+  id    Int    @id @unique @default(autoincrement())
   name  String
   price Int
   game  String
@@ -23,10 +23,18 @@ model Product {
 }
 
 model Transaction {
-  id        String   @id @default(uuid())
+  id        String   @id @unique @default(uuid())
+  gameId    String     
   quantity  Int
   createdAt DateTime @default(now())
 
   productId Int
   product   Product @relation(fields: [productId], references: [id])
+}
+
+model AdminAccount {
+  id            Int    @unique @default(autoincrement())
+  email         String @unique
+  password      String
+  refresh_token String? @db.Text
 }

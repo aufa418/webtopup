@@ -1,29 +1,31 @@
-import { PrismaClient } from "@prisma/client"
+const { PrismaClient } = require('@prisma/client');
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
-export const getProduct = async (req, res) => {
-    const data = await prisma.product.findMany()
-    return res.json(200, {
+const getProduct = async (req, res) => {
+    const data = await prisma.product.findMany();
+    return res.json({
+        status: 200,
         message: 'Success get Data',
         data
-    })
-}
+    });
+};
 
-export const getDataByProductGame = async (req, res) => {
+const getDataByProductGame = async (req, res) => {
     const data = await prisma.product.findMany({
         where: {
             game: req.params.game
         }
-    })
+    });
 
-    return res.json(200, {
+    return res.json({
+        status: 200,
         message: 'Success get data',
         data
-    })
-}
+    });
+};
 
-export const getDataByProductId = async (req, res) => {
+const getDataByProductId = async (req, res) => {
     try {
         const data = await prisma.product.findUnique({
             where: {
@@ -47,9 +49,9 @@ export const getDataByProductId = async (req, res) => {
             error: error.message
         });
     }
-}
+};
 
-export const createProduct = async (req, res) => {
+const createProduct = async (req, res) => {
     const { name, price, game } = req.body;
 
     if (!name || !price || !game) {
@@ -75,37 +77,41 @@ export const createProduct = async (req, res) => {
             error: error.message
         });
     }
-}
+};
 
-export const updateProduct = async (req, res) => {
-    const { name, price, game } = req.body
-    const { id } = req.params
+const updateProduct = async (req, res) => {
+    const { name, price, game } = req.body;
+    const { id } = req.params;
 
     const data = await prisma.product.update({
         where: {
-            id: id
+            id: parseInt(id)
         },
         data: {
             name, price, game
         }
-    })
+    });
 
-    return res.json(200, {
+    return res.json({
+        status: 200,
         message: 'Success update data',
         data
-    })
-}
+    });
+};
 
-export const deleteProduct = async (req, res) => {
-    const { id } = req.params
+const deleteProduct = async (req, res) => {
+    const { id } = req.params;
     const data = await prisma.product.delete({
         where: {
-            id: id
+            id: parseInt(id)
         }
-    })
+    });
 
-    return res.json(200, {
+    return res.json({
+        status: 200,
         message: 'Success delete data',
         data
-    })
-}
+    });
+};
+
+module.exports = { getProduct, getDataByProductGame, getDataByProductId, createProduct, updateProduct, deleteProduct };

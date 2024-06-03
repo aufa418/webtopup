@@ -1,23 +1,19 @@
 import { useEffect, useState } from "react"
 import Modal from "./Modal";
 import PropTypes from 'prop-types'
+import axios from "axios";
 
 const ProductList = ({ game }) => {
-    const getProduct = `${import.meta.env.VITE_API_URL}/product/game/${game}`
+    const ApiBase = import.meta.env.VITE_API_URL
+    const getProduct = `${ApiBase}/game/${game}`
     const [product, setProduct] = useState([])
 
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                const response = await fetch(getProduct);
-                if (!response.ok) throw new Error('Network response was not ok');
+            const response = await axios.get(getProduct);
+            if (!response.status == 200 ) throw new Error('Network response was not ok');
 
-                const data = await response.json();
-
-                setProduct(data.data);
-            } catch (error) {
-                console.error('Failed to fetch products:', error);
-            }
+            setProduct(response.data.data);
         };
 
         fetchData();
@@ -29,20 +25,20 @@ const ProductList = ({ game }) => {
     }
 
     return (
-        <div>
-            {product.map((product) => (
+        <div className="grid xl:grid-cols-3 gap-3 md:grid-cols-2 justify-items-center">
+            {product ? product.map((product) => (
                 <div key={product.id}>
                     <div className="card w-96 bg-base-100 shadow-xl">
                         <div className="card-body items-center text-center">
                             <h2 className="card-title">{product.name}</h2>
                             <p>{formatRupiah(product.price)}</p>
                             <div className="card-actions">
-                                <Modal product={product} />
+                                <Modal id={product.id} />
                             </div>
                         </div>
                     </div>
                 </div>
-            ))}
+            )) : 'Loading...'}
         </div>
     )
 }
